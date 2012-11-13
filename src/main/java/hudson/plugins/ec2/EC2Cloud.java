@@ -89,7 +89,8 @@ public abstract class EC2Cloud extends Cloud {
         if(instanceCapStr.equals("")) {
             this.instanceCap = Integer.MAX_VALUE;
         } else {
-            this.instanceCap = Integer.parseInt(instanceCapStr);
+            this.instanceCap = 40;
+            //this.instanceCap = Integer.parseInt(instanceCapStr);
         }
 
         readResolve(); // set parents
@@ -227,8 +228,8 @@ public abstract class EC2Cloud extends Cloud {
                     LOGGER.log(Level.INFO, "Instance cap reached, not provisioning.");
                     break;      // maxed out
                 }
-
-                int amiCap = t.getInstanceCap();
+                int amiCap = 40;
+                //int amiCap = t.getInstanceCap();
                 if (amiCap < countCurrentEC2Slaves(t.ami)) {
                     LOGGER.log(Level.INFO, "AMI Instance cap reached, not provisioning.");
                     break;      // maxed out

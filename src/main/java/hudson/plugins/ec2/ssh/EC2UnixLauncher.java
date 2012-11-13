@@ -148,7 +148,7 @@ public class EC2UnixLauncher extends EC2ComputerLauncher {
     private int bootstrap(Connection bootstrapConn, EC2Computer computer, PrintStream logger) throws IOException, InterruptedException, AmazonClientException {
         boolean closeBootstrap = true;
         try {
-            int tries = 20;
+            int tries = 40;
             boolean isAuthenticated = false;
             KeyPair key = EC2Cloud.get().getKeyPair();
             while (tries-- > 0) {
