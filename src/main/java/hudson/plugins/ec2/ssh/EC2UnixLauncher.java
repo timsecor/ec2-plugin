@@ -25,7 +25,7 @@ import com.trilead.ssh2.Session;
 
 /**
  * {@link ComputerLauncher} that connects to a Unix slave on EC2 by using SSH.
- * 
+ *
  * @author Kohsuke Kawaguchi
  */
 public class EC2UnixLauncher extends EC2ComputerLauncher {
@@ -33,23 +33,23 @@ public class EC2UnixLauncher extends EC2ComputerLauncher {
     private final int FAILED=-1;
     private final int SAMEUSER=0;
     private final int RECONNECT=-2;
-    
+
     protected String buildUpCommand(EC2Computer computer, String command) {
-    	if (!computer.getRemoteAdmin().equals("root")) {
-    		command = computer.getRootCommandPrefix() + " " + command;
-    	}
-    	return command;
+        if (!computer.getRemoteAdmin().equals("root")) {
+            command = computer.getRootCommandPrefix() + " " + command;
+        }
+        return command;
     }
 
 
     @Override
-	protected void launch(EC2Computer computer, PrintStream logger, Instance inst) throws IOException, AmazonClientException, InterruptedException {
+    protected void launch(EC2Computer computer, PrintStream logger, Instance inst) throws IOException, AmazonClientException, InterruptedException {
 
         final Connection bootstrapConn;
         final Connection conn;
         Connection cleanupConn = null; // java's code path analysis for final doesn't work that well.
         boolean successful = false;
-        
+
         try {
             bootstrapConn = connectToSsh(computer, logger);
             int bootstrapResult = bootstrap(bootstrapConn, computer, logger);
@@ -133,7 +133,7 @@ public class EC2UnixLauncher extends EC2ComputerLauncher {
             sess.execCommand(launchString);
             computer.setChannel(sess.getStdout(),sess.getStdin(),logger,new Listener() {
                 @Override
-				public void onClosed(Channel channel, IOException cause) {
+                public void onClosed(Channel channel, IOException cause) {
                     sess.close();
                     conn.close();
                 }
@@ -151,14 +151,20 @@ public class EC2UnixLauncher extends EC2ComputerLauncher {
             int tries = 40;
             boolean isAuthenticated = false;
             KeyPair key = EC2Cloud.get().getKeyPair();
+
             while (tries-- > 0) {
-                logger.println("Authenticating as " + computer.getRemoteAdmin());
-                isAuthenticated = bootstrapConn.authenticateWithPublicKey(computer.getRemoteAdmin(), key.getKeyMaterial().toCharArray(), "");
-                if (isAuthenticated) {
-                    break;
+                try {
+                    logger.println("Authenticating as " + computer.getRemoteAdmin());
+                    isAuthenticated = bootstrapConn.authenticateWithPublicKey(computer.getRemoteAdmin(), key.getKeyMaterial().toCharArray(), "");
+                    if (isAuthenticated) {
+                        break;
+                    }
+                    logger.println("Authentication failed. Trying again...");
+                    Thread.sleep(10000);
+                    catch (IOException e) {
+                        logger.println("Waiting for chef to bake key...")
+                    }
                 }
-                logger.println("Authentication failed. Trying again...");
-                Thread.sleep(10000);
             }
             if (!isAuthenticated) {
                 logger.println("Authentication failed");
@@ -171,6 +177,7 @@ public class EC2UnixLauncher extends EC2ComputerLauncher {
                 bootstrapConn.close();
         }
     }
+
 
     private Connection connectToSsh(EC2Computer computer, PrintStream logger) throws AmazonClientException, InterruptedException {
         while(true) {
@@ -226,7 +233,7 @@ public class EC2UnixLauncher extends EC2ComputerLauncher {
     }
 
     @Override
-	public Descriptor<ComputerLauncher> getDescriptor() {
+    public Descriptor<ComputerLauncher> getDescriptor() {
         throw new UnsupportedOperationException();
     }
 }
