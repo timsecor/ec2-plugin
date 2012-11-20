@@ -161,10 +161,11 @@ public class EC2UnixLauncher extends EC2ComputerLauncher {
                     }
                     logger.println("Authentication failed. Trying again...");
                     Thread.sleep(10000);
-                    catch (IOException e) {
-                        logger.println("Waiting for chef to bake key...")
-                    }
+                } catch (IOException e) {
+                    logger.println("Waiting for chef to bake key...");
+                    Thread.sleep(10000);
                 }
+
             }
             if (!isAuthenticated) {
                 logger.println("Authentication failed");
