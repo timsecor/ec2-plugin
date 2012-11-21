@@ -223,6 +223,7 @@ public abstract class EC2Cloud extends Cloud {
 
             List<PlannedNode> r = new ArrayList<PlannedNode>();
             for( ; excessWorkload>0; excessWorkload-- ) {
+                LOGGER.log(Level.INFO, "Counting instances, instanceCap: " + instanceCap);
                 if(countCurrentEC2Slaves(null)>=instanceCap) {
                     LOGGER.log(Level.INFO, "Instance cap reached, not provisioning.");
                     break;      // maxed out
