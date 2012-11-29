@@ -224,12 +224,17 @@ public abstract class EC2Cloud extends Cloud {
             List<PlannedNode> r = new ArrayList<PlannedNode>();
             for( ; excessWorkload>0; excessWorkload-- ) {
                 LOGGER.log(Level.INFO, "Counting instances, instanceCap: " + instanceCap);
-                if(countCurrentEC2Slaves(null)>=instanceCap) {
-                    LOGGER.log(Level.INFO, "Instance cap reached, not provisioning.");
-                    break;      // maxed out
+                int countedSlaves = countCurrentEC2Slaves(null);
+                LOGGER.log(Level.INFO, "Counted instances: " + countedSlaves);
+                if(countedSlaves>=instanceCap) {
+                    LOGGER.log(Level.INFO, "Instance cap reached, checking AMI cap before provisioning.");
+                    //break;      // maxed out
                 }
                 int amiCap = t.getInstanceCap();
-                if (amiCap < countCurrentEC2Slaves(t.ami)) {
+                LOGGER.log(Level.INFO, "Counting AMI instances, instanceCap: " + amiCap);
+                int countedAMISlaves = countCurrentEC2Slaves(t.ami);
+                LOGGER.log(Level.INFO, "Counted AMI instances: " + countedAMISlaves);
+                if (amiCap < countedAMISlaves) {
                     LOGGER.log(Level.INFO, "AMI Instance cap reached, not provisioning.");
                     break;      // maxed out
                 }
