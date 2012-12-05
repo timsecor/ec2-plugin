@@ -94,9 +94,15 @@ public class EC2UnixLauncher extends EC2ComputerLauncher {
                 sess.execCommand(buildUpCommand(computer, "touch ~/.hudson-run-init"));
             }
 
+            logger.println("Verifying presence of /data/slave/okta/Build.properties");
+            while (conn.exec("ls /data/slave/okta/Build.properties 2>/dev/null", logger) ==0) {
+                logger.println("Waiting for chef to touch file");
+                Thread.sleep(15000);
+            }
+
             logger.println("Checking if chef-client still running");
             while (conn.exec("ps -ef | grep [c]hef-client", logger) ==0) {
-                logger.println("Waiting for chef to finish");
+                logger.println("Waiting for chef process to finish");
                 Thread.sleep(15000);
             }
 
