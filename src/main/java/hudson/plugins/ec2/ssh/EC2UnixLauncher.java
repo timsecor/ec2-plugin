@@ -94,6 +94,12 @@ public class EC2UnixLauncher extends EC2ComputerLauncher {
                 sess.execCommand(buildUpCommand(computer, "touch ~/.hudson-run-init"));
             }
 
+            logger.println("Checking if chef-client still running");
+            while (conn.exec("ps -ef | grep [c]hef-client", logger) ==0) {
+                logger.println("Waiting for chef to finish");
+                Thread.sleep(15000);
+            }
+
             // TODO: parse the version number. maven-enforcer-plugin might help
             logger.println("Verifying that java exists");
             if(conn.exec("java -fullversion", logger) !=0) {

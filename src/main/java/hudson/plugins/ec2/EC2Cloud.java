@@ -234,7 +234,7 @@ public abstract class EC2Cloud extends Cloud {
                 LOGGER.log(Level.INFO, "Counting AMI instances, instanceCap: " + amiCap);
                 int countedAMISlaves = countCurrentEC2Slaves(t.ami);
                 LOGGER.log(Level.INFO, "Counted AMI instances: " + countedAMISlaves);
-                if (amiCap < countedAMISlaves) {
+                if (amiCap <= countedAMISlaves) {
                     LOGGER.log(Level.INFO, "AMI Instance cap reached, not provisioning.");
                     break;      // maxed out
                 }
