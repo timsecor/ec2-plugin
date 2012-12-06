@@ -95,7 +95,7 @@ public class EC2UnixLauncher extends EC2ComputerLauncher {
             }
 
             logger.println("Verifying presence of /data/slave/okta/Build.properties");
-            while (conn.exec("ls /data/slave/okta/Build.properties 2>/dev/null", logger) ==0) {
+            while (conn.exec("ls /data/slave/okta/Build.properties 2>/dev/null", logger) !=0) {
                 logger.println("Waiting for chef to touch file");
                 Thread.sleep(15000);
             }
