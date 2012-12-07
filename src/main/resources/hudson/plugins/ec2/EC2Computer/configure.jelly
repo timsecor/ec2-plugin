@@ -62,7 +62,7 @@ THE SOFTWARE.
           <f:textbox />
         </f:entry>
 
-        <f:entry title="${%Init Script}" field="initScript">
+        <f:entry title="${%Boot Script}" field="initScript">
           <f:textarea />
         </f:entry>
 
