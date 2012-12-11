@@ -48,6 +48,7 @@ public final class EC2Slave extends Slave {
     public final boolean stopOnTerminate;
     public final String idleTerminationMinutes;
     public final boolean usePrivateDnsName;
+    public final boolean useJnlp;
     public List<EC2Tag> tags;
 
     // Temporary stuff that is obtained live from EC2
@@ -106,7 +107,7 @@ public final class EC2Slave extends Slave {
      * Constructor for debugging.
      */
     public EC2Slave(String instanceId) throws FormException, IOException {
-        this(instanceId,"debug", "/tmp/hudson", 22, 1, Mode.NORMAL, "debug", "", Collections.<NodeProperty<?>>emptyList(), null, null, null, false, null, "Fake public", "Fake private", null, false);
+        this(instanceId,"debug", "/tmp/hudson", 22, 1, Mode.NORMAL, "debug", "", Collections.<NodeProperty<?>>emptyList(), null, null, null, false, null, "Fake public", "Fake private", null, false, false);
     }
 
     /**
