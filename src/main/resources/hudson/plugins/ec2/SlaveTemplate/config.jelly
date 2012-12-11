@@ -95,6 +95,10 @@ THE SOFTWARE.
       <f:checkbox />
     </f:entry>
 
+    <f:entry title="${%Use jnlp instead of ssh}" field="useJnlp">
+      <f:checkbox />
+    </f:entry>
+    
     <f:entry title="${%Subnet ID for VPC}" field="subnetId">
        <f:textbox />
     </f:entry>

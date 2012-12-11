@@ -125,19 +125,34 @@ public class EC2UnixLauncher extends EC2ComputerLauncher {
             logger.println("Copying slave.jar");
             scp.put(Hudson.getInstance().getJnlpJars("slave.jar").readFully(),
                     "slave.jar","/tmp");
+            boolean useJnlp = computer.getNode().useJnlp;
 
-            String jvmopts = computer.getNode().jvmopts;
-            String launchString = "java " + (jvmopts != null ? jvmopts : "") + " -jar /tmp/slave.jar";
-            logger.println("Launching slave agent: " + launchString);
-            final Session sess = conn.openSession();
-            sess.execCommand(launchString);
-            computer.setChannel(sess.getStdout(),sess.getStdin(),logger,new Listener() {
-                @Override
-                public void onClosed(Channel channel, IOException cause) {
-                    sess.close();
-                    conn.close();
-                }
-            });
+
+            if (!useJnlp) {
+                String jvmopts = computer.getNode().jvmopts;
+                String launchString = "java " + (jvmopts != null ? jvmopts : "") + " -jar /tmp/slave.jar";
+                logger.println("Launching slave agent: " + launchString);
+                final Session sess = conn.openSession();
+                sess.execCommand(launchString);
+                computer.setChannel(sess.getStdout(),sess.getStdin(),logger,new Listener() {
+                    @Override
+                    public void onClosed(Channel channel, IOException cause) {
+                        sess.close();
+                        conn.close();
+                    }
+                });
+            } else {
+                String jvmopts = computer.getNode().jvmopts;
+                String privateDNS = computer.getNode().privateDNS;
+
+                String launchString = "java " + (jvmopts != null ? jvmopts : "") + " -jar /tmp/slave.jar -jnlpUrl http://" + (privateDNS != null ? privateDNS : "clusterbuild06.trex.saasure.com") + ":8080/computer/" + computer.getNode().getNodeName() + "/slave-agent.jnlp &";
+                logger.println("Launching slave agent: " + launchString);
+                final Session sess = conn.openSession();
+                sess.execCommand(launchString);
+                sess.close();
+                conn.close();
+            }
+
             successful = true;
         } finally {
             if(cleanupConn != null && !successful)
@@ -212,7 +227,7 @@ public class EC2UnixLauncher extends EC2ComputerLauncher {
                     public boolean verifyServerHostKey(String hostname, int port, String serverHostKeyAlgorithm, byte[] serverHostKey) throws Exception {
                         return true;
                     }
-                });
+                }, 0, 0);
                 logger.println("Connected via SSH.");
                 return conn; // successfully connected
             } catch (IOException e) {
