@@ -145,7 +145,7 @@ public class EC2UnixLauncher extends EC2ComputerLauncher {
                 String jvmopts = computer.getNode().jvmopts;
                 String privateDNS = computer.getNode().privateDNS;
 
-                String launchString = "java " + (jvmopts != null ? jvmopts : "") + " -jar /tmp/slave.jar -jnlpUrl http://" + (privateDNS != null ? privateDNS : "clusterbuild06.trex.saasure.com") + ":8080/computer/" + computer.getNode().getNodeName() + "/slave-agent.jnlp &";
+                String launchString = "java " + (jvmopts != null ? jvmopts : "") + " -jar /tmp/slave.jar -jnlpUrl http://clusterbuild06.trex.saasure.com:8080/computer/" + computer.getNode().getNodeName() + "/slave-agent.jnlp &";
                 logger.println("Launching slave agent: " + launchString);
                 final Session sess = conn.openSession();
                 sess.execCommand(launchString);
